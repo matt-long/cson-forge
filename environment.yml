@@ -1,0 +1,44 @@
+name: cson-forge
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python>=3.11
+  - PyCO2SYS
+  - black
+  - cartopy
+  - cmocean
+  - coverage
+  - dask
+  - dask-jobqueue
+  - distributed
+  - esmpy
+  - ffmpeg
+  - flake8
+  - h5py
+  - holoviews
+  - ipykernel
+  - ipywidgets
+  - jupyter-book
+  - jupyterlab
+  - mamba
+  - matplotlib
+  - nc-time-axis
+  - netCDF4
+  - numpy>2,<2.3
+  - pandas
+  - papermill
+  - pip
+  - pop-tools
+  - pre-commit==3.8.0
+  - pytest
+  - pytest-xdist
+  - rasterio
+  - rioxarray
+  - roms-tools
+  - scipy
+  - seawater
+  - xarray
+  - xesmf
+  - xgcm
+  - zarr

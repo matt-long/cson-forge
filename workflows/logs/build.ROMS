@@ -1,0 +1,83 @@
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+rsync -a /Users/mclong/codes/ucla-roms/src/*.F /Users/mclong/codes/ucla-roms/src/*.h  ../bld_wio-toy
+make show_tag
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+cp -p *.h *.F *.opt Makedefs.inc ../bld_wio-toy 2>/dev/null || :
+cd ../bld_wio-toy; make depend 2>/dev/null || :
+INFO: Automatically selected MPI_WRAPPER=mpifort based on COMPILER=gnu
+failed to generate dependency list with makedepf90, using python fallback
+something went screwy with wec_frc on line            usec=ustr0(i,j)*tanh(2*keff(i,j)*Dstp(i,j))
+
+something went screwy with wec_frc on line             USEZ=0.
+
+something went screwy with wec_frc on line               USEZ=USEZ+ust_r(i,j,k)*Hz(i,j,k)
+
+Updated Make.depend (dependency list)
+cd ../bld_wio-toy; make -j6; mv roms ../exe/roms.wio-toy
+INFO: Automatically selected MPI_WRAPPER=mpifort based on COMPILER=gnu
+./srcscheck
+./cppcheck cppdefs.opt
+
+ This is SRCSCHECK: Creating new version of check_srcs.F.
+
+
+ This is cppcheck: Creating new version of "check_switches1.F".
+
+
+ Processing cppdefs.opt                                                     
+
+
+nswtchs =  41
+
+cppdefs.opt                                                     
+             7  18  ROMS_MARBL_EXAMPLE
+            16   8  CURVGRID
+            17   9  SPHERICAL
+            18   7  MASKING
+            21   8  BULK_FRC
+            22  13  EXACT_RESTART
+            23   6  SPONGE
+            24  12  RIVER_SOURCE
+            27   7  UV_VIS2
+            28   7  TS_DIF2
+            32   7  SOLVE3D
+            33   6  UV_ADV
+            34   6  UV_COR
+            37   8  SALINITY
+            38  10  NONLIN_EOS
+            39   9  SPLIT_EOS
+            43   5  TIDES
+            46  10  LMD_MIXING
+            47   7  LMD_KPP
+            48   8  LMD_BKPP
+            49   9  LMD_RIMIX
+            50  10  LMD_CONVEC
+            51  12  LMD_NONLOCAL
+            58  20  IMPLICIT_BOTTOM_DRAG
+            60  13  OBC_M2FLATHER
+            61  14  OBC_M3ORLANSKI
+            62  13  OBC_TORLANKSI
+            64   8  OBC_EAST
+            65   9  OBC_NORTH
+            66   9  OBC_SOUTH
+            68   9  Z_FRC_BRY
+            69  10  M2_FRC_BRY
+            70  10  M3_FRC_BRY
+            71   9  T_FRC_BRY
+            74   5  MARBL
+            75  11  MARBL_DIAGS
+            78  11  NOX_FORCING
+            79  11  NHY_FORCING
+            85  12  BIOLOGY_BEC2
+            86   7  BIOLOGY
+            91  15  PCO2AIR_FORCING
+mpifort  -c -O3 -fallow-argument-mismatch -o check_srcs.o check_srcs.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
+mpifort  -c -O3 -fallow-argument-mismatch -o check_switches1.o check_switches1.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
+mpifort   -O3 -fallow-argument-mismatch   -o a.out add_git_hash.o alfabeta.o analytical.o basic_output.o bec2_driver.o bec2_params.o bec2_vars.o bgc_forces.o bgc_io.o bgc_shared_vars.o boundary.o buffer.o bulk_frc.o cdr_frc.o check_srcs.o check_switches1.o check_switches2.o checkdims.o closecdf.o comm_vars.o coupling.o cstar_output.o diag.o diag_vars.o diagnostics.o dimensions.o eos_vars.o ext_copy_prv2shr.o extract_data.o flux_frc.o get_init.o grid.o grid_stiffness.o hidden_mpi_vars.o init_arrays.o init_scalars.o insert_node.o lenstr.o lmd_kpp.o lmd_swr_frac.o lmd_vmix.o main.o marbl_driver.o mess_buffers.o mixing.o mpi_exchanges.o mpi_setup.o mpi_test_arr.o nc_read_write.o ocean_vars.o omega.o param.o particles.o pipe_frc.o pre_step3d4S.o private_scratch.o prsgrd.o random_output.o read_inp.o rho_eos.o river_frc.o roms_read_write.o scalars.o scoord.o set_depth.o set_forces.o set_nudgcof.o set_scoord.o set_weights.o setup_grid1.o setup_grid2.o setup_kwds.o sponge_tune.o step2d_FB.o step3d_t_ISO.o step3d_uv1.o step3d_uv2.o strings.o surf_flux.o t3dbc_im.o t3dmix_S.o tides.o timers.o tracers.o u2dbc_im.o u3dbc_im.o upscale_output.o v2dbc_im.o v3dbc_im.o visc3d_S.o w3dbc_im.o wec_frc.o work_mod.o wvlcty.o zetabc.o zslice_output.o -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi 
+ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
+ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
+mv a.out roms
