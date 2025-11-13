@@ -12,6 +12,7 @@ grid_stiffness.o : grid_stiffness.F cppdefs.opt param.o hidden_mpi_vars.o comm_v
 pre_step3d4S.o : pre_step3d4S.F cppdefs.opt param.o hidden_mpi_vars.o private_scratch.o dimensions.o river_frc.o wec_frc.o surf_flux.o tracers.o diagnostics.o coupling.o grid.o mixing.o ocean_vars.o scalars.o strings.o 
 check_srcs.o : check_srcs.F cppdefs.opt strings.o 
 surf_flux.o : surf_flux.F cppdefs.opt param.o dimensions.o roms_read_write.o nc_read_write.o scalars.o surf_flux.opt 
+setup_kwds.o : setup_kwds.F cppdefs.opt param.o scalars.o strings.o 
 bec2_params.o : bec2_params.F cppdefs.opt param.o grid.o bgc_io.o bgc_shared_vars.o bec2_vars.o 
 scalars.o : scalars.F cppdefs.opt param.o 
 pipe_frc.o : pipe_frc.F cppdefs.opt dimensions.o roms_read_write.o nc_read_write.o scalars.o pipe_frc.opt ana_pipe_frc.h 
