@@ -20,7 +20,7 @@
 
       !			For testing it is good to make uneven partitions 
       ! 		to test MPI compataiblity 
-      integer, parameter :: NP_XI = 5, NP_ETA = 2
+      integer, parameter :: NP_XI = {{ NP_XI }}, NP_ETA = {{ NP_ETA }}
       integer, parameter :: NSUB_X = 1, NSUB_E = 1
 
       ! Defining number of tracers

@@ -22,8 +22,11 @@ all:
 	@rsync -a $(ROMS_ROOT)/src/Makefile ../bld_$(GRID_NAME)
 	@rm ../bld_$(GRID_NAME)/*.f	2>/dev/null || :
 	cp -p *.h *.F *.opt Makedefs.inc ../bld_$(GRID_NAME) 2>/dev/null || :
+	cp -p rendered/*.F rendered/*.h  ../bld_$(GRID_NAME) 2>/dev/null || :
+	cp -p rendered/*.opt ../bld_$(GRID_NAME) 2>/dev/null || :
 	cd ../bld_$(GRID_NAME); make depend 2>/dev/null || :
 	cd ../bld_$(GRID_NAME); make -j6; mv roms ../exe/roms.$(GRID_NAME)
+	@rm rendered/* 2>/dev/null || :
 
 
 # note: "2>/dev/null || :" above is needed to suppress error

@@ -11,20 +11,11 @@ trap 'echo "❌ Error on line $LINENO while running: $BASH_COMMAND" >&2' ERR
 # Parse arguments
 # ---------------------------------------
 DO_CLEAN=false
-GRID_NAME=""
-ROMS_CONFIG_ROOT=""
+export GRID_NAME=""
 while [[ "${1:-}" != "" ]]; do
   case "$1" in
     -c|--clean)
       DO_CLEAN=true
-      ;;
-    --config-root)
-      shift
-      ROMS_CONFIG_ROOT="${1:-}"
-      if [[ -z "$ROMS_CONFIG_ROOT" || "$ROMS_CONFIG_ROOT" == -* ]]; then
-        echo "Error: --config-root requires a non-empty argument." >&2
-        exit 2
-      fi
       ;;
     --grid-name)
       shift
@@ -46,16 +37,15 @@ done
 # ---------------------------------------
 # Enforce required arguments
 # ---------------------------------------
-if [[ -z "$GRID_NAME" || -z "$ROMS_CONFIG_ROOT" ]]; then
+if [[ -z "$GRID_NAME" ]]; then
   echo "Error: missing required argument(s)." >&2
-  [[ -z "$GRID_NAME"  ]] && echo "  --grid-name <name> is required." >&2
-  [[ -z "$ROMS_CONFIG_ROOT" ]] && echo "  --config-root <name> is required." >&2
-  echo
-  echo "Usage: $0 [--clean] --grid-name <name> --config-root <name>" >&2
+  echo "  --grid-name <name> is required." >&2
+  echo "Usage: $0 [--clean] --grid-name <name>" >&2
   exit 2
 fi
 
-export INPUT_DATA_PATH=$(python -c "import config; print(config.input_data)")/${GRID_NAME}
+export ROMS_CONFIG_ROOT=$(python -c "import config; print(config.paths.model_config)")
+export INPUT_DATA_PATH=$(python -c "import config; print(config.paths.input_data)")/${GRID_NAME}
 #export BUILD_MODE=debug
 
 # ---------------------------------------
