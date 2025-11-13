@@ -7,7 +7,7 @@ here = os.path.dirname(os.path.realpath(__file__))
 
 # local 
 logs = Path(f"{here}/logs")
-grid_defs = Path(f"{here}/grid-defs")
+blueprints = Path(f"{here}/blueprints")
 config_defs = Path(f"{here}/model-configs")
 
 # model configuration
