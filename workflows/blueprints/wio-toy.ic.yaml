@@ -20,11 +20,11 @@ InitialConditions:
   ini_time: '2012-01-01T00:00:00'
   source:
     name: GLORYS
-    path: /Users/mclong/data/source_data/GLORYS_wio-toy_2012-01-01-2012-02-01.nc
+    path: /Users/mclong/cson-forge-data/source_data/GLORYS_wio-toy_2012-01-01-2012-02-01.nc
     climatology: false
   bgc_source:
     name: UNIFIED
-    path: /Users/mclong/data/source_data/BGCdataset.nc
+    path: /Users/mclong/cson-forge-data/source_data/BGCdataset.nc
     climatology: true
   model_reference_date: '2000-01-01T00:00:00'
   adjust_depth_for_sea_surface_height: false
