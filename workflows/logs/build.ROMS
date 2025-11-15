@@ -1,9 +1,9 @@
-rsync -a /Users/mclong/codes/ucla-roms/src/*.F /Users/mclong/codes/ucla-roms/src/*.h  ../bld_gulf-guinea
+rsync -a /Users/mclong/codes/ucla-roms/src/*.F /Users/mclong/codes/ucla-roms/src/*.h  ../bld_gulf-guinea-toy
 make show_tag
-cp -p *.h *.F *.opt Makedefs.inc ../bld_gulf-guinea 2>/dev/null || :
-cp -p ../opt_gulf-guinea/*.F ../opt_gulf-guinea/*.h  ../bld_gulf-guinea 2>/dev/null || :
-cp -p ../opt_gulf-guinea/*.opt ../bld_gulf-guinea 2>/dev/null || :
-cd ../bld_gulf-guinea; make depend 2>/dev/null || :
+cp -p *.h *.F *.opt Makedefs.inc ../bld_gulf-guinea-toy 2>/dev/null || :
+cp -p ../opt_gulf-guinea-toy/*.F ../opt_gulf-guinea-toy/*.h  ../bld_gulf-guinea-toy 2>/dev/null || :
+cp -p ../opt_gulf-guinea-toy/*.opt ../bld_gulf-guinea-toy 2>/dev/null || :
+cd ../bld_gulf-guinea-toy; make depend 2>/dev/null || :
 INFO: Automatically selected MPI_WRAPPER=mpifort based on COMPILER=gnu
 failed to generate dependency list with makedepf90, using python fallback
 something went screwy with wec_frc on line            usec=ustr0(i,j)*tanh(2*keff(i,j)*Dstp(i,j))
@@ -13,7 +13,7 @@ something went screwy with wec_frc on line             USEZ=0.
 something went screwy with wec_frc on line               USEZ=USEZ+ust_r(i,j,k)*Hz(i,j,k)
 
 Updated Make.depend (dependency list)
-cd ../bld_gulf-guinea; make -j6; mv roms ../exe/roms.gulf-guinea
+cd ../bld_gulf-guinea-toy; make -j6; mv roms ../exe/roms.gulf-guinea-toy
 INFO: Automatically selected MPI_WRAPPER=mpifort based on COMPILER=gnu
 mpifort  -c -O3 -fallow-argument-mismatch -o param.o param.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o strings.o strings.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
@@ -157,7 +157,6 @@ mpifort  -c -O3 -fallow-argument-mismatch -o nc_read_write.o nc_read_write.fpp -
 mpifort  -c -O3 -fallow-argument-mismatch -o hidden_mpi_vars.o hidden_mpi_vars.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o scoord.o scoord.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -O3 -fallow-argument-mismatch   -o cppcheck cppcheck.o
-mpifort  -c -O3 -fallow-argument-mismatch -o bgc_forces.o bgc_forces.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 srcscheck.F:39:51: warning: empty character constant [-Winvalid-pp-token]
    39 |      &     'do i=1,max_opt_size',  'srcs(i:i)='' ''',   'enddo'
       |                                                   ^
@@ -165,7 +164,8 @@ srcscheck.F:91:42: warning: empty character constant [-Winvalid-pp-token]
    91 |      &                   indx+ie-is, ')=''', string(is:ie), ''''
       |                                          ^
 srcscheck.F:91:61: warning: empty character constant [-Winvalid-pp-token]
-   91 |      &                   indx+ie-is, ')=''', string(is:ie), ''''
+   91 |      &                   indx+ie-is, ')=''', mpifort  -c -O3 -fallow-argument-mismatch -o bgc_forces.o bgc_forces.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
+string(is:ie), ''''
       |                                                             ^
 srcscheck.F:91:63: warning: empty character constant [-Winvalid-pp-token]
    91 |      &                   indx+ie-is, ')=''', string(is:ie), ''''
@@ -183,11 +183,11 @@ ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignor
 mpifort  -c -O3 -fallow-argument-mismatch -o closecdf.o closecdf.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o comm_vars.o comm_vars.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o ext_copy_prv2shr.o ext_copy_prv2shr.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
-mpifort  -c -O3 -fallow-argument-mismatch -o mess_buffers.o mess_buffers.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -O3 -fallow-argument-mismatch   -o checkkwds checkkwds.o
+mpifort  -c -O3 -fallow-argument-mismatch -o mess_buffers.o mess_buffers.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
+ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
+ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
 mpifort  -c -O3 -fallow-argument-mismatch -o mpi_test_arr.o mpi_test_arr.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
-ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
-ld: warning: duplicate -rpath '/Users/mclong/miniconda3/envs/roms_env/lib' ignored
 mpifort  -c -O3 -fallow-argument-mismatch -o dimensions.o dimensions.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o eos_vars.o eos_vars.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 ocean_vars.F:80:78: warning: missing terminating ' character [-Winvalid-pp-token]
@@ -214,7 +214,6 @@ mpifort  -c -O3 -fallow-argument-mismatch -o check_switches2.o check_switches2.f
 ./checkkwds
 mpifort  -c -O3 -fallow-argument-mismatch -o set_scoord.o set_scoord.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o timers.o timers.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
-mpifort  -c -O3 -fallow-argument-mismatch -o mpi_exchanges.o mpi_exchanges.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 ./srcscheck
 
  This is cppcheck: Creating new version of "check_switches1.F".
@@ -267,6 +266,7 @@ cppdefs.opt
             85  12  BIOLOGY_BEC2
             86   7  BIOLOGY
             91  15  PCO2AIR_FORCING
+mpifort  -c -O3 -fallow-argument-mismatch -o mpi_exchanges.o mpi_exchanges.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o set_weights.o set_weights.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 mpifort  -c -O3 -fallow-argument-mismatch -o check_switches1.o check_switches1.fpp -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdff -lnetcdf -L/Users/mclong/miniconda3/envs/roms_env/lib -lnetcdf -L/Users/mclong/codes/MARBL/lib -lmarbl-gnu-mpi -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/miniconda3/envs/roms_env/include -I/Users/mclong/codes/MARBL/include/gnu-mpi
 

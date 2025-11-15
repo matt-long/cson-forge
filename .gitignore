@@ -135,3 +135,4 @@ dask-worker-space/
 .vscode/
 .DS_Store
 workflows/model-configs/exe/*
+*.o
