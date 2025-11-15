@@ -26,7 +26,7 @@ BoundaryForcing:
     west: true
   source:
     name: UNIFIED
-    path: /Users/mclong/data/source_data/BGCdataset.nc
+    path: /Users/mclong/cson-forge-data/source_data/BGCdataset.nc
     climatology: true
   type: bgc
   apply_2d_horizontal_fill: false

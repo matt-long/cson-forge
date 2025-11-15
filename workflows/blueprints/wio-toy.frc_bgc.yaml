@@ -21,7 +21,7 @@ SurfaceForcing:
   end_time: '2012-02-01T00:00:00'
   source:
     name: UNIFIED
-    path: /Users/mclong/data/source_data/BGCdataset.nc
+    path: /Users/mclong/cson-forge-data/source_data/BGCdataset.nc
     climatology: true
   type: bgc
   correct_radiation: true
