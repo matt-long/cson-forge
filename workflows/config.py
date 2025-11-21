@@ -25,7 +25,7 @@ class DataPaths:
     Includes:
     - source_data
     - input_data
-    - output_data
+    - run_dir
     - code_root
     - blueprints
     - models_yaml
@@ -36,7 +36,7 @@ class DataPaths:
     model_configs: Path
     source_data: Path
     input_data: Path
-    output_data: Path
+    run_dir: Path
     code_root: Path
     blueprints: Path
     models_yaml: Path
@@ -91,7 +91,7 @@ def _detect_system() -> str:
 # --------------------------------------------------------
 
 # Now each layout returns 4 paths:
-# (source_data, input_data, output_data, code_root)
+# (source_data, input_data, run_dir, code_root)
 SystemLayoutFn = Callable[[Path, dict], Tuple[Path, Path, Path, Path]]
 SYSTEM_LAYOUT_REGISTRY: Dict[str, SystemLayoutFn] = {}
 
@@ -101,7 +101,7 @@ def register_system(tag: str) -> Callable[[SystemLayoutFn], SystemLayoutFn]:
     Decorator to register a system-specific path layout.
 
     The decorated function must accept (home: Path, env: dict)
-    and return (source_data, input_data, output_data, code_root).
+    and return (source_data, input_data, run_dir, code_root).
     """
     tag = tag.lower()
 
@@ -119,11 +119,11 @@ def register_system(tag: str) -> Callable[[SystemLayoutFn], SystemLayoutFn]:
 @register_system("mac")
 def _layout_mac(home: Path, env: dict) -> Tuple[Path, Path, Path, Path]:
     base = home / "cson-forge-data"
-    source_data = base / "source_data"
-    input_data = base / "input_data"
-    output_data = base / "output_data"
+    source_data = base / "source-data"
+    input_data = base / "input-data"
+    run_dir = base / "cson-forge-run"
     code_root = base / "codes"
-    return source_data, input_data, output_data, code_root
+    return source_data, input_data, run_dir, code_root
 
 
 @register_system("anvil")
@@ -132,11 +132,11 @@ def _layout_anvil(home: Path, env: dict) -> Tuple[Path, Path, Path, Path]:
     scratch_root = Path(env.get("SCRATCH", work / "scratch"))
     base = work / "cson-forge-data"
 
-    source_data = base / "source_data"
-    input_data = base / "input_data"
-    output_data = scratch_root / "cson-forge-output"
+    source_data = base / "source-data"
+    input_data = base / "input-data"
+    run_dir = scratch_root / "cson-forge-run"
     code_root = base / "codes"
-    return source_data, input_data, output_data, code_root
+    return source_data, input_data, run_dir, code_root
 
 
 @register_system("perlmutter")
@@ -144,22 +144,22 @@ def _layout_perlmutter(home: Path, env: dict) -> Tuple[Path, Path, Path, Path]:
     scratch_root = Path(env.get("SCRATCH", home / "scratch"))
     base = scratch_root / "cson-forge-data"
 
-    source_data = base / "source_data"
-    input_data = base / "input_data"
-    output_data = base / "output_data"
+    source_data = base / "source-data"
+    input_data = base / "input-data"
+    run_dir = base / "cson-forge-run"
     code_root = base / "codes"
-    return source_data, input_data, output_data, code_root
+    return source_data, input_data, run_dir, code_root
 
 
 @register_system("unknown")
 def _layout_unknown(home: Path, env: dict) -> Tuple[Path, Path, Path, Path]:
     base = home / "cson-forge-data"
 
-    source_data = base / "source_data"
-    input_data = base / "input_data"
-    output_data = base / "output_data"
+    source_data = base / "source-data"
+    input_data = base / "input-data"
+    run_dir = base / "cson-forge-run"
     code_root = base / "codes"
-    return source_data, input_data, output_data, code_root
+    return source_data, input_data, run_dir, code_root
 
 
 # --------------------------------------------------------
@@ -178,7 +178,7 @@ def get_data_paths() -> DataPaths:
         system_tag, SYSTEM_LAYOUT_REGISTRY["unknown"]
     )
 
-    source_data, input_data, output_data, code_root = layout_fn(home, env)
+    source_data, input_data, run_dir, code_root = layout_fn(home, env)
 
     here = Path(__file__).resolve().parent
     model_configs = here / "model-configs"
@@ -187,7 +187,7 @@ def get_data_paths() -> DataPaths:
     builds_yaml = here / "builds.yml"    
 
     # ensure everything exists
-    for p in (source_data, input_data, output_data, code_root, blueprints_dir, model_configs):
+    for p in (source_data, input_data, run_dir, code_root, blueprints_dir, model_configs):
         _ensure_dir(p)
 
     return DataPaths(
@@ -195,7 +195,7 @@ def get_data_paths() -> DataPaths:
         model_configs=model_configs,
         source_data=source_data,
         input_data=input_data,
-        output_data=output_data,
+        run_dir=run_dir,
         code_root=code_root,
         blueprints=blueprints_dir,
         models_yaml=models_yaml,

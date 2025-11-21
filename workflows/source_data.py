@@ -72,9 +72,9 @@ SRTM15_URL = f"https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_{SRTM15_VERSION}.nc
 
 # GLORYS dataset key: set based on system type
 # - "mac" (local-client) → "GLORYS_REGIONAL" (regional subset)
-# - "hpc" systems (anvil, perlmutter, etc.) → "GLORYS" (full dataset)
+# - "hpc" systems (anvil, perlmutter, etc.) → "GLORYS_GLOBAL" (full dataset)
 if config.system == "mac":
-    glorys_dataset_key: str = "GLORYS_GLOBAL"
+    glorys_dataset_key: str = "GLORYS_REGIONAL"
 else:
     glorys_dataset_key: str = "GLORYS_GLOBAL"
 
@@ -86,6 +86,8 @@ glorys_dataset_id: str = "cmems_mod_glo_phy_my_0.083deg_P1D-m"
 
 
 SOURCE_ALIAS: Dict[str, str] = {
+    # ERA5 surface forcing
+    "ERA5": "ERA5",
     # GLORYS
     "GLORYS": glorys_dataset_key,
     "GLORYS_GLOBAL": "GLORYS_GLOBAL",
@@ -95,9 +97,17 @@ SOURCE_ALIAS: Dict[str, str] = {
     "UNIFIED_BGC": "UNIFIED_BGC",
     # SRTM15 bathymetry
     "SRTM15": f"SRTM15_{SRTM15_VERSION}".upper(),
+    # TPXO tidal data (user-provided)
+    "TPXO": "TPXO",
     # Rivers, etc. (placeholder – add real dataset handlers as needed)
     "DAI": "DAI",  # expected to correspond to a DAI dataset if/when added
 }
+
+# List of source names that are streamable and do not need to be prepared unless explicitly requested.
+STREAMABLE_SOURCES: List[str] = [
+    "ERA5",
+    "DAI",
+]
 
 
 def map_source_to_dataset_key(name: str) -> str:
@@ -143,8 +153,12 @@ class SourceData:
     end_time: Optional[object] = None
 
     def __post_init__(self):
-        # Normalize dataset names
-        self.datasets = [SOURCE_ALIAS[ds.upper()] for ds in self.datasets]
+        # Normalize dataset names through SOURCE_ALIAS (if not found, use uppercased name)
+        normalized = []
+        for ds in self.datasets:
+            ds_upper = ds.upper()
+            normalized.append(SOURCE_ALIAS.get(ds_upper, ds_upper))
+        self.datasets = normalized
         
         # Validate requested datasets
         known = set(DATASET_REGISTRY.keys())
@@ -163,16 +177,29 @@ class SourceData:
     # Public API
     # -----------------------------------------
 
-    def prepare_all(self):
-        """Prepare all requested source datasets and populate `self.paths`."""
+    def prepare_all(self, include_streamable: bool = False):
+        """
+        Prepare all requested source datasets and populate `self.paths`.
+        
+        Parameters
+        ----------
+        include_streamable : bool, optional
+            If True, also prepare streamable datasets. If False (default),
+            streamable datasets are skipped.
+        """
         for name in self.datasets:
-            handler = DATASET_REGISTRY[name]
+            if name in STREAMABLE_SOURCES and not include_streamable:
+                continue
+            # raise error if not in registry (shouldn't happen after validation, but be safe)
+            if name not in DATASET_REGISTRY:
+                raise ValueError(f"Unknown dataset: {name}")
 
+            handler = DATASET_REGISTRY[name]
             # Make sure required attributes are provided
-            missing = [attr for attr in handler.requires if getattr(self, attr) is None]
-            if missing:
+            missing_attrs = [attr for attr in handler.requires if getattr(self, attr) is None]
+            if missing_attrs:
                 raise ValueError(
-                    f"Dataset '{name}' requires attributes {missing}, "
+                    f"Dataset '{name}' requires attributes {missing_attrs}, "
                     "but they were not provided to SourceData()."
                 )
 
@@ -216,13 +243,16 @@ class SourceData:
         """
         key = self.dataset_key_for_source(logical_name)
         try:
-            return self.paths[key]
+            return self.paths[key]            
         except KeyError:
-            raise KeyError(
-                f"Source '{logical_name}' maps to dataset '{key}', "
-                f"but that dataset was not prepared. Available datasets: "
-                f"{', '.join(sorted(self.paths.keys()))}"
-            )
+            if key in STREAMABLE_SOURCES:
+                return None
+            else:
+                raise KeyError(
+                    f"Source '{logical_name}' maps to dataset '{key}', "
+                    f"but that dataset was not prepared. Available datasets: "
+                    f"{', '.join(sorted(self.paths.keys()))}"
+                )
 
     # -----------------------------------------
     # Internals / helpers
@@ -293,8 +323,6 @@ class SourceData:
             # Move to next day
             current_date += timedelta(days=1)
         
-        # Store paths - use first path or a list
-        self.paths["GLORYS"] = paths[0] if len(paths) == 1 else paths
         return paths
 
 
@@ -311,7 +339,10 @@ def _prepare_glorys_regional(self: SourceData) -> List[Path]:
     """Download or reuse daily regional GLORYS subsets for this grid and time range."""
     is_regional = True
     bounds = rt.get_glorys_bounds(self.grid)
-    return self._prepare_glorys_daily(is_regional, bounds)
+    paths = self._prepare_glorys_daily(is_regional, bounds)
+    # Store paths under the dataset key
+    self.paths["GLORYS_REGIONAL"] = paths[0] if len(paths) == 1 else paths
+    return paths
 
 
 # ---------------------------
@@ -332,7 +363,10 @@ def _prepare_glorys_global(self: SourceData) -> List[Path]:
         "minimum_latitude": None,
         "maximum_latitude": None,
     }
-    return self._prepare_glorys_daily(is_regional, bounds)
+    paths = self._prepare_glorys_daily(is_regional, bounds)
+    # Store paths under the dataset key
+    self.paths["GLORYS_GLOBAL"] = paths[0] if len(paths) == 1 else paths
+    return paths
 
 # ---------------------------
 # UNIFIED BGC handler
@@ -406,3 +440,61 @@ def _prepare_srtm15(self: SourceData) -> Path:
 
     self.srtm15_path = path
     return path
+
+
+# ---------------------------
+# TPXO handler (user-provided dataset)
+# ---------------------------
+
+
+@register_dataset("TPXO")
+def _prepare_tpxo(self: SourceData) -> Path:
+    """
+    Verify that the user has provided TPXO tidal data files.
+    
+    This is a USER_DATASET that must be downloaded by the user.
+    The handler checks that all required files exist at the expected location:
+    - config.paths.source_data / "TPXO/TPXO10.v2/grid_tpxo10v2.nc"
+    - config.paths.source_data / "TPXO/TPXO10.v2/h_tpxo10.v2.nc"
+    - config.paths.source_data / "TPXO/TPXO10.v2/u_tpxo10.v2.nc"
+    
+    Returns
+    -------
+    Path
+        Base directory path to the TPXO dataset.
+        
+    Raises
+    ------
+    FileNotFoundError
+        If the TPXO directory or any required files are missing.
+    """
+    tpxo_path = config.paths.source_data / "TPXO" / "TPXO10.v2"
+    
+    tpxo_dict = {
+        "grid": tpxo_path / "grid_tpxo10v2.nc",
+        "h": tpxo_path / "h_tpxo10.v2.nc",
+        "u": tpxo_path / "u_tpxo10.v2.nc",
+    }
+    
+    # Check that the base directory exists
+    if not tpxo_path.exists():
+        raise FileNotFoundError(
+            f"TPXO dataset directory not found at: {tpxo_path}\n"
+            f"Please download TPXO data and place it in the expected location."
+        )
+    
+    # Check that all required files exist
+    missing_files = []
+    for key, file_path in tpxo_dict.items():
+        if not file_path.exists():
+            missing_files.append(f"  - {key}: {file_path}")
+    
+    if missing_files:
+        raise FileNotFoundError(
+            f"TPXO dataset is incomplete. Missing files:\n" + "\n".join(missing_files) + "\n"
+            f"Please ensure all TPXO files are present in: {tpxo_path}"
+        )
+    
+    print(f"✔️  TPXO dataset verified at: {tpxo_path}")
+    self.paths["TPXO"] = tpxo_path
+    return tpxo_dict

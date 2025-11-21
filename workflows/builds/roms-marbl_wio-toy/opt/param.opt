@@ -16,11 +16,11 @@
 ! nt  must be 2 or more if Salinity is defined
                       
       ! Grid dimensions and subdomains 
-      integer, parameter :: LLm={{ NX }}, MMm={{ NY }}, N={{ NK }}    ! Idealized grid (diff xi and eta size on purpose) 
+      integer, parameter :: LLm=20, MMm=20, N=10    ! Idealized grid (diff xi and eta size on purpose) 
 
       !			For testing it is good to make uneven partitions 
       ! 		to test MPI compataiblity 
-      integer, parameter :: NP_XI = {{ NP_XI }}, NP_ETA = {{ NP_ETA }}
+      integer, parameter :: NP_XI = 2, NP_ETA = 5
       integer, parameter :: NSUB_X = 1, NSUB_E = 1
 
       ! Defining number of tracers
