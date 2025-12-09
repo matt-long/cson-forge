@@ -1099,6 +1099,7 @@ def build(
 
     # -----------------------------------------------------
     # Create env if needed
+    # -----------------------------------------------------
     env_list = _run([conda_exe, "env", "list"])
 
     if roms_conda_env not in env_list:
