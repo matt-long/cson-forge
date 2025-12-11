@@ -979,6 +979,7 @@ def build(
     parameters: Dict[str, Dict[str, Any]],
     clean: bool = False,
     use_conda: bool = False,
+    skip_inputs_check: bool = False,
 ) -> Optional[Path]:
     """
     Build the ocean model for a given grid and `model_name` (e.g., "roms-marbl").
@@ -1001,6 +1002,9 @@ def build(
     use_conda : bool, optional
         If True, use conda to manage the build environment. If False (default),
         source a shell script from ROMS_ROOT/environments/{system}.sh.
+    skip_inputs_check : bool, optional
+        If True, skip the check for whether the input_data_path directory exists.
+        Default is False.
     """
     # Unique build token and logging setup
     build_token = (
@@ -1041,12 +1045,13 @@ def build(
     log(f"Build token: {build_token}")
 
     # Paths from config / sanity checks
-    if not input_data_path.is_dir():
-        raise FileNotFoundError(
-            f"Expected input data directory for grid '{grid_name}' at:\n"
-            f"  {input_data_path}\n"
-            "but it does not exist. Did you run the `gen_inputs` step?"
-        )
+    if not skip_inputs_check:
+        if not input_data_path.is_dir():
+            raise FileNotFoundError(
+                f"Expected input data directory for grid '{grid_name}' at:\n"
+                f"  {input_data_path}\n"
+                "but it does not exist. Did you run the `gen_inputs` step?"
+            )
 
     codes_root = config.paths.code_root
     roms_root = codes_root / model_spec.repos["roms"].default_dirname
@@ -1947,6 +1952,7 @@ class OcnModel:
             parameters=parameters,
             clean=clean,
             use_conda=use_conda,
+            skip_inputs_check=skip_inputs_check,
         )
         if exe_path is None:
             raise RuntimeError(
