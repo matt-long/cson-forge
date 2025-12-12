@@ -1900,7 +1900,14 @@ class OcnModel:
             raise RuntimeError(
                 "Executable not built yet. Call OcnModel.build() first."
             )
-        return f"mpirun -n {self.n_tasks} {self.executable} {self.spec.master_settings_file}"
+        if self.cluster_type == ClusterType.LOCAL:
+            return f"mpirun -n {self.n_tasks} {self.executable} {self.spec.master_settings_file}"
+        elif self.cluster_type == ClusterType.SLURM:
+            return f"srun -n {self.n_tasks} {self.executable} {self.spec.master_settings_file}"
+        else:
+            raise NotImplementedError(
+                f"Run command is not implemented for cluster type: {self.cluster_type}"
+            )
 
     def prepare_source_data(self, clobber: bool = False):
         self.src_data = source_data.SourceData(
