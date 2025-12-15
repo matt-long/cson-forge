@@ -35,6 +35,16 @@ jobs:
           python=${{ matrix.python-version }}
         cache-environment-key: micromamba-${{ matrix.python-version }}-${{ runner.os }}
         
+    - name: Set up conda for build tests
+      shell: bash -l {0}
+      run: |
+        # Set CONDA_EXE to point to micromamba so conda commands work
+        # This allows the build tests to find conda when use_conda=True
+        # The _get_conda_command() function checks for CONDA_EXE environment variable
+        MICROMAMBA_PATH=$(which micromamba)
+        echo "CONDA_EXE=$MICROMAMBA_PATH" >> $GITHUB_ENV
+        echo "Set CONDA_EXE=$MICROMAMBA_PATH"
+        
     - name: Run tests
       shell: bash -l {0}
       working-directory: ${{ github.workspace }}
