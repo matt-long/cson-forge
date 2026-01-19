@@ -400,7 +400,11 @@ class RomsMarblInputData(InputData):
             if "xi_coarse" in ds.dims:
                 # Load data into memory (file will be closed when exiting context)
                 ds_loaded = ds.load()
+                # Preserve all global attributes (hc, theta_s, theta_b, etc.)
+                attrs = ds_loaded.attrs.copy()
                 ds_modified = ds_loaded.drop_dims("xi_coarse")
+                # Restore global attributes
+                ds_modified.attrs = attrs
         
         # File is now closed, safe to write
         if ds_modified is not None:
@@ -433,6 +437,12 @@ class RomsMarblInputData(InputData):
         self._settings_compile_time["param"]["NSUB_X"] = 1
         self._settings_compile_time["param"]["NSUB_E"] = 1
 
+        self._settings_run_time["roms.in"]["s_coord"] = dict(
+            tcline = self.grid.hc,
+            theta_b = self.grid.theta_b,
+            theta_s = self.grid.theta_s,
+        )
+        
     @register_input(name="initial_conditions", order=20, label="Generating initial conditions")
     def _generate_initial_conditions(self, key: str = "initial_conditions", **kwargs):
         """Generate initial conditions input file."""

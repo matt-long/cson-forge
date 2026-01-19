@@ -12,7 +12,7 @@ Grid:
   N: 100
   theta_s: 6.0
   theta_b: 6.0
-  hc: 250
+  hc: 250.0
   topography_source:
     name: ETOPO5
   mask_shapefile: null
