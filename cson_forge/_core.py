@@ -1867,7 +1867,7 @@ class CstarSpecBuilder(BaseModel):
         self._cstar_simulation.build(rebuild=rebuild)
         return self._cstar_simulation
 
-    def run(self, wallclock: str = "06:00:00", run_time_settings: Optional[cstar_models.RuntimeParameterSet] = None, **kwargs):
+    def run(self, walltime: str = "06:00:00", run_time_settings: Optional[cstar_models.RuntimeParameterSet] = None, **kwargs):
         """
         Run the model executable and advance blueprint to RUN stage.
         
@@ -1949,7 +1949,7 @@ class CstarSpecBuilder(BaseModel):
         else:
             return self._cstar_simulation.run(
                 account_key=account_key, 
-                wallclock=wallclock, 
+                walltime=walltime, 
                 queue_name=queue_name, 
                 job_name=self.casename,
             )
