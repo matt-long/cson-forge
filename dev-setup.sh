@@ -300,7 +300,7 @@ fi
 # This should be unnecessary once C-Star is released to 
 # conda-forge and available via conda install
 #--------------------------------------------------------
-REPO_URL="https://github.com/CWorthy-ocean/C-Star.git"
+REPO_URL="https://github.com/matt-long/C-Star.git"
 BRANCH="orchestration"
 
 # Get the directory where this script is located
@@ -324,37 +324,6 @@ if [ -d "$REPO_DIR" ]; then
 else
   echo "Cloning C-Star repository..."
   git clone -b "$BRANCH" "$REPO_URL" "$REPO_DIR"
-fi
-
-# Extract roms-tools version from environment.yml and update C-Star's pyproject.toml
-echo "Updating C-Star pyproject.toml to pin roms_tools version from environment.yml..."
-ENV_YML="${SCRIPT_DIR}/environment.yml"
-CSTAR_PYPROJECT="${REPO_DIR}/pyproject.toml"
-
-if [ ! -f "$ENV_YML" ]; then
-  echo "Warning: environment.yml not found at $ENV_YML, skipping roms_tools version pinning"
-elif [ ! -f "$CSTAR_PYPROJECT" ]; then
-  echo "Warning: C-Star pyproject.toml not found at $CSTAR_PYPROJECT, skipping roms_tools version pinning"
-else
-  # Extract version from environment.yml (format: "roms-tools==3.3.0" or "roms-tools=3.3.0")
-  # Matches both conda format (2 spaces) and pip format (4 spaces)
-  ROMS_TOOLS_VERSION=$(grep -E "^[[:space:]]{2,4}-[[:space:]]*roms-tools[=]" "$ENV_YML" | sed -E 's/^[[:space:]]*-[[:space:]]*roms-tools[=]+([0-9.]+).*/\1/' | head -1)
-  
-  if [ -z "$ROMS_TOOLS_VERSION" ]; then
-    echo "Warning: Could not extract roms-tools version from environment.yml, skipping version pinning"
-  else
-    echo "Found roms-tools version: $ROMS_TOOLS_VERSION"
-    # Update both occurrences in pyproject.toml (dependencies and optional-dependencies.test)
-    # Use sed to replace the version while preserving the [dask] extra
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      # macOS uses BSD sed, requires different syntax
-      sed -i '' -E "s/roms_tools\[dask\]==[0-9.]+/roms_tools[dask]==${ROMS_TOOLS_VERSION}/g" "$CSTAR_PYPROJECT"
-    else
-      # Linux uses GNU sed
-      sed -i -E "s/roms_tools\[dask\]==[0-9.]+/roms_tools[dask]==${ROMS_TOOLS_VERSION}/g" "$CSTAR_PYPROJECT"
-    fi
-    echo "✓ Updated C-Star pyproject.toml to use roms_tools[dask]==${ROMS_TOOLS_VERSION}"
-  fi
 fi
 
 # Install C-Star in editable mode
