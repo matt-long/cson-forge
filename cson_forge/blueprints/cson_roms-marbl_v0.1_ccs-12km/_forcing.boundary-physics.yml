@@ -29,8 +29,8 @@ BoundaryForcing:
     name: GLORYS
     climatology: false
     path:
-    - /Users/mclong/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240101.nc
-    - /Users/mclong/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240102.nc
+    - /anvil/projects/x-ees250129/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240101.nc
+    - /anvil/projects/x-ees250129/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240102.nc
   type: physics
   apply_2d_horizontal_fill: false
   adjust_depth_for_sea_surface_height: false

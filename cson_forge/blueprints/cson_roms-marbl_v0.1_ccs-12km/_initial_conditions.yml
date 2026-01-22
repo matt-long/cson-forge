@@ -23,12 +23,12 @@ InitialConditions:
     name: GLORYS
     climatology: false
     path:
-    - /Users/mclong/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240101.nc
-    - /Users/mclong/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240102.nc
+    - /anvil/projects/x-ees250129/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240101.nc
+    - /anvil/projects/x-ees250129/cson-forge-data/source-data/GLORYS_REGIONAL/cmems_mod_glo_phy_my_0.083deg_P1D-m_REGIONAL_ccs-12km_20240102.nc
   bgc_source:
     name: UNIFIED
     climatology: true
-    path: /Users/mclong/cson-forge-data/source-data/UNIFIED_BGC/BGCdataset.nc
+    path: /anvil/projects/x-ees250129/cson-forge-data/source-data/UNIFIED_BGC/BGCdataset.nc
   model_reference_date: '2000-01-01T00:00:00'
   adjust_depth_for_sea_surface_height: false
   allow_flex_time: false

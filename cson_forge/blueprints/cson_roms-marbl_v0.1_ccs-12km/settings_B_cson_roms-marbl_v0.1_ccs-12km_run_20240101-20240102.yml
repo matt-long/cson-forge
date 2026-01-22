@@ -100,7 +100,7 @@ compile_time:
     nrpf: 7
     diag_uv: false
     diag_trc: false
-    diag_pflx: false
+    diag_pflx: true
     timescale: 86400
     diag_prec: nf90_double
   tracers:
@@ -122,6 +122,21 @@ compile_time:
     cdr_loc_dep: cdr_dep
     cdr_scl_hor: cdr_hsc
     cdr_scl_vrt: cdr_vsc
+  sponge_tune:
+    pflx_w_vname: up_west
+    pflx_w_tname: bry_time
+    pflx_e_vname: up_east
+    pflx_e_tname: bry_time
+    pflx_s_vname: vp_south
+    pflx_s_tname: bry_time
+    pflx_n_vname: vp_north
+    pflx_n_tname: bry_time
+    ub_tune: false
+    spn_avg: true
+    sp_timscale: 86400
+    wrt_sponge: true
+    nrpf: 7
+    output_period: 86400
 run_time:
   roms.in:
     title:
@@ -136,19 +151,19 @@ run_time:
       theta_b: 6.0
       theta_s: 6.0
     grid:
-      grid_file: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_grid.nc
+      grid_file: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_grid.nc
     forcing:
-      surface_forcing_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_surface-physics_202401.nc
-      surface_forcing_bgc_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_surface-bgc_clim.nc
-      boundary_forcing_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_boundary-physics_202401.nc
-      boundary_forcing_bgc_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_boundary-bgc_clim.nc
-      river_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_river.nc
+      surface_forcing_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_surface-physics_202401.nc
+      surface_forcing_bgc_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_surface-bgc_clim.nc
+      boundary_forcing_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_boundary-physics_202401.nc
+      boundary_forcing_bgc_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_boundary-bgc_clim.nc
+      river_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_river.nc
     lateral_visc:
       visc2: 0.0
       visc4: 0.0
       rho0: 1000.0
     output_root_name:
-      output_root_name: /Users/mclong/cson-forge-data/cson-forge-run/cson_roms-marbl_v0.1_ccs-12km_20240101-20240102/output/cson_roms-marbl_v0.1_ccs-12km_20240101-20240102
+      output_root_name: /anvil/scratch/x-mlong/cson-forge-run/cson_roms-marbl_v0.1_ccs-12km_20240101-20240102/output/cson_roms-marbl_v0.1_ccs-12km_20240101-20240102
     vertical_mixing:
       akv: 0.0
       akt_default: 0.0
@@ -166,4 +181,4 @@ run_time:
     ubind: 0.1
     initial:
       nrrec: 1
-      initial_file: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_initial_conditions.nc
+      initial_file: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_ccs-12km/cson_roms-marbl_v0.1_ccs-12km_initial_conditions.nc
