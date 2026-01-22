@@ -22,9 +22,9 @@ TidalForcing:
     name: TPXO
     climatology: false
     path:
-      grid: /Users/mclong/cson-forge-data/source-data/TPXO/TPXO10.v2/grid_tpxo10v2.nc
-      h: /Users/mclong/cson-forge-data/source-data/TPXO/TPXO10.v2/h_tpxo10.v2.nc
-      u: /Users/mclong/cson-forge-data/source-data/TPXO/TPXO10.v2/u_tpxo10.v2.nc
+      grid: /anvil/projects/x-ees250129/cson-forge-data/source-data/TPXO/TPXO10.v2/grid_tpxo10v2.nc
+      h: /anvil/projects/x-ees250129/cson-forge-data/source-data/TPXO/TPXO10.v2/h_tpxo10.v2.nc
+      u: /anvil/projects/x-ees250129/cson-forge-data/source-data/TPXO/TPXO10.v2/u_tpxo10.v2.nc
   ntides: 15
   model_reference_date: '2012-01-01T00:00:00'
   bypass_validation: false

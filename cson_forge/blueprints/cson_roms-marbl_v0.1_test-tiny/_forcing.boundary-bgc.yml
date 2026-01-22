@@ -28,7 +28,7 @@ BoundaryForcing:
   source:
     name: UNIFIED
     climatology: true
-    path: /Users/mclong/cson-forge-data/source-data/UNIFIED_BGC/BGCdataset.nc
+    path: /anvil/projects/x-ees250129/cson-forge-data/source-data/UNIFIED_BGC/BGCdataset.nc
   type: bgc
   apply_2d_horizontal_fill: false
   adjust_depth_for_sea_surface_height: false

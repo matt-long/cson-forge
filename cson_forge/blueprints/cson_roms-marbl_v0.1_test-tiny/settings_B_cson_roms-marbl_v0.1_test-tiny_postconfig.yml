@@ -151,19 +151,19 @@ run_time:
       theta_b: 2.0
       theta_s: 5.0
     grid:
-      grid_file: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_grid.nc
+      grid_file: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_grid.nc
     forcing:
-      surface_forcing_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_surface-physics_201201.nc
-      surface_forcing_bgc_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_surface-bgc_clim.nc
-      boundary_forcing_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_boundary-physics_201201.nc
-      boundary_forcing_bgc_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_boundary-bgc_clim.nc
-      river_path: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_river.nc
+      surface_forcing_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_surface-physics_201201.nc
+      surface_forcing_bgc_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_surface-bgc_clim.nc
+      boundary_forcing_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_boundary-physics_201201.nc
+      boundary_forcing_bgc_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_boundary-bgc_clim.nc
+      river_path: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_river.nc
     lateral_visc:
       visc2: 0.0
       visc4: 0.0
       rho0: 1000.0
     output_root_name:
-      output_root_name: /Users/mclong/cson-forge-data/cson-forge-run/cson_roms-marbl_v0.1_test-tiny_20120101-20120102/output/cson_roms-marbl_v0.1_test-tiny_20120101-20120102
+      output_root_name: /anvil/scratch/x-mlong/cson-forge-run/cson_roms-marbl_v0.1_test-tiny_20120101-20120102/output/cson_roms-marbl_v0.1_test-tiny_20120101-20120102
     vertical_mixing:
       akv: 0.0
       akt_default: 0.0
@@ -181,4 +181,4 @@ run_time:
     ubind: 0.1
     initial:
       nrrec: 1
-      initial_file: /Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_initial_conditions.nc
+      initial_file: /anvil/projects/x-ees250129/cson-forge-data/x-mlong/input-data/cson_roms-marbl_v0.1_test-tiny/cson_roms-marbl_v0.1_test-tiny_initial_conditions.nc

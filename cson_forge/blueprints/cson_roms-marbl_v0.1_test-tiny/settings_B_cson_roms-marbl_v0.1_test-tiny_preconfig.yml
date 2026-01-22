@@ -163,7 +163,7 @@ run_time:
       visc4: 0.0
       rho0: 1000.0
     output_root_name:
-      output_root_name: /Users/mclong/cson-forge-data/cson-forge-run/cson_roms-marbl_v0.1_test-tiny_20120101-20120102/output/cson_roms-marbl_v0.1_test-tiny_20120101-20120102
+      output_root_name: /anvil/scratch/x-mlong/cson-forge-run/cson_roms-marbl_v0.1_test-tiny_20120101-20120102/output/cson_roms-marbl_v0.1_test-tiny_20120101-20120102
     vertical_mixing:
       akv: 0.0
       akt_default: 0.0
