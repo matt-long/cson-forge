@@ -300,6 +300,104 @@ cluster_type = _default_cluster_type(system)
 
 
 # --------------------------------------------------------
+# Environment and Machine Information
+# --------------------------------------------------------
+
+@dataclass
+class EnvironmentInfo:
+    """Information about the execution environment and machine."""
+    hostname: str
+    system_tag: str
+    os_info: str
+    python_version: str
+    python_executable: str
+    conda_env: Optional[str]
+    conda_prefix: Optional[str]
+    kernel_name: Optional[str]
+    kernel_version: Optional[str]
+    
+    @property
+    def env_info(self) -> str:
+        """Formatted conda/micromamba environment information."""
+        if self.conda_env:
+            return f"{self.conda_env} ({self.conda_prefix})"
+        return "Not in conda/micromamba environment"
+    
+    @property
+    def kernel_spec(self) -> str:
+        """Formatted kernel information."""
+        if self.kernel_name and self.kernel_version:
+            return f"{self.kernel_name} ({self.kernel_version})"
+        elif self.kernel_name:
+            return self.kernel_name
+        return "unknown"
+
+
+def get_environment_info() -> EnvironmentInfo:
+    """
+    Collect and return information about the execution environment and machine.
+    
+    Returns:
+        EnvironmentInfo: Dataclass containing machine and environment details.
+    """
+    # Get machine information
+    hostname = socket.gethostname() or platform.node() or os.environ.get("HOSTNAME", "unknown")
+    system_tag = _detect_system()
+    os_info = f"{platform.system()} {platform.release()} ({platform.machine()})"
+    
+    # Get environment information
+    python_version = sys.version.split()[0]
+    python_executable = sys.executable
+    
+    # Try to get kernel information
+    kernel_name = None
+    kernel_version = None
+    try:
+        from jupyter_client.kernelspec import KernelSpecManager
+        ksm = KernelSpecManager()
+        # Try to get current kernel name from environment or kernel spec
+        kernel_name = os.environ.get("JPY_KERNEL_NAME", None)
+        if not kernel_name:
+            # Try to infer from Python executable path
+            if "cson-forge" in python_executable:
+                kernel_name = "cson-forge-v0"
+            else:
+                kernel_name = None
+        try:
+            import ipykernel
+            kernel_version = f"ipykernel {ipykernel.__version__}"
+        except:
+            kernel_version = None
+    except Exception:
+        pass
+    
+    # Try to get conda/micromamba environment
+    conda_env = os.environ.get("CONDA_DEFAULT_ENV", None)
+    conda_prefix = None
+    if conda_env:
+        conda_prefix = os.environ.get("CONDA_PREFIX", os.environ.get("MAMBA_ROOT_PREFIX", None))
+    
+    # Import the class from the current module to ensure it's accessible
+    # This handles autoreload issues where the class might not be in scope
+    current_module = sys.modules[__name__]
+    EnvironmentInfo = getattr(current_module, 'EnvironmentInfo')
+    
+    return EnvironmentInfo(
+        hostname=hostname,
+        system_tag=system_tag,
+        os_info=os_info,
+        python_version=python_version,
+        python_executable=python_executable,
+        conda_env=conda_env,
+        conda_prefix=conda_prefix,
+        kernel_name=kernel_name,
+        kernel_version=kernel_version,
+    )
+
+
+
+
+# --------------------------------------------------------
 # CLI
 # --------------------------------------------------------
 
