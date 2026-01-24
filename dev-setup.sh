@@ -301,7 +301,7 @@ fi
 # conda-forge and available via conda install
 #--------------------------------------------------------
 REPO_URL="https://github.com/matt-long/C-Star.git"
-BRANCH="orchestration"
+BRANCH="orchestration+forge-build"
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
