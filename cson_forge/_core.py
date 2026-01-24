@@ -218,7 +218,12 @@ class CstarSpecBuilder(BaseModel):
         
         This property sets blueprint.name when the blueprint is created.
         """
-        return f"{self._model_spec.name}_{self.grid_name}"
+        return f"{self._model_spec.name}_{self.grid_name}_{self.n_procs}procs"
+
+    @property
+    def n_procs(self) -> int:
+        """Return the number of processors."""
+        return self.partitioning.n_procs_x * self.partitioning.n_procs_y
 
     @property
     def datestr(self) -> str:
@@ -252,7 +257,7 @@ class CstarSpecBuilder(BaseModel):
     @property
     def blueprint_dir(self) -> Path:
         """Return the blueprint directory path."""
-        return config.paths.blueprints / self.name
+        return config.paths.blueprints / self.name / config.system_id
 
     @property
     def compile_time_code_dir(self) -> Path:
