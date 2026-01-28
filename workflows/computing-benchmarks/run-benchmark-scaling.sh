@@ -1,12 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=benchmark-scaling
-#SBATCH --partition=shared
+#SBATCH --partition=wholenode
 #SBATCH --output=output/logs/benchmark-scaling-%j.out
 #SBATCH --error=output/logs/benchmark-scaling-%j.err
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=16
-#SBATCH --mem=32G
+#SBATCH --ntasks-per-node=128
 #SBATCH --account=ees250129
 
 # Exit on error (but allow unset variables for conda/micromamba operations)
@@ -77,7 +76,7 @@ clobber_inputs_flag=
 #clobber_inputs_flag="--clobber-inputs"
 
 # Loop over ensemble IDs
-for ensemble_id in 2 3 4; do
+for ensemble_id in 10 20 30 40; do
     echo "=========================================="
     echo "Running benchmark scaling for ensemble_id=${ensemble_id}"
     echo "Current directory: $(pwd)"
