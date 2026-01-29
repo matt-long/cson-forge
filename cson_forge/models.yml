@@ -30,6 +30,7 @@ cson_roms-marbl_v0.1:
   settings:
     properties:
       n_tracers: 34
+      marbl: true
     compile_time:
       _default_config_yaml: "{{ config.path.model_configs }}/{{ model.name }}/templates/compile-time-defaults.yml"
     run_time:
@@ -116,6 +117,7 @@ cson_roms-no-bgc_v0.1:
   settings:
     properties:
       n_tracers: 2
+      marbl: false
     compile_time:
       _default_config_yaml: "{{ config.path.model_configs }}/{{ model.name }}/templates/compile-time-defaults.yml"
     run_time:

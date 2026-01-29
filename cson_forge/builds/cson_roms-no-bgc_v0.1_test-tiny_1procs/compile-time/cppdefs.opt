@@ -66,11 +66,8 @@
 #define EXACT_RESTART
 
 /* Open Boundary Conditions */
-{% if cppdefs.obc_west %}#define OBC_WEST
-{% endif %}{% if cppdefs.obc_east %}#define OBC_EAST
-{% endif %}{% if cppdefs.obc_north %}#define OBC_NORTH
-{% endif %}{% if cppdefs.obc_south %}#define OBC_SOUTH
-{% endif %}
+#define OBC_EAST
+#define OBC_NORTH
 
 /* Open Boundaries */
 #define OBC_M2FLATHER  /* Barotop. BC: OBC_M2FLATHER, OBC_M2ORLANSKI, OBC_M2SPECIFIED */
@@ -86,8 +83,6 @@
 #  define UV_TIDES
 #endif
 
-{% if cppdefs.marbl %}#define MARBL
-{% endif %}
 
 #ifdef MARBL
 #  define MARBL_DIAGS
@@ -100,5 +95,4 @@
 #endif
 
 #include "set_global_definitions.h"
-
 

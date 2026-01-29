@@ -319,11 +319,14 @@ class PropertiesSpec(BaseModel):
     ----------
     n_tracers : int
         Number of tracers for the model configuration.
+    marbl : bool
+        Whether the model includes MARBL biogeochemistry.
     """
     
     model_config = ConfigDict(extra="forbid")
     
     n_tracers: int = Field(description="Number of tracers")
+    marbl: bool = Field(description="Whether the model includes MARBL biogeochemistry")
 
 
 class SettingsSpec(BaseModel):
