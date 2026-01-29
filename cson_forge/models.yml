@@ -94,7 +94,6 @@ cson_roms-no-bgc_v0.1:
       location: "{{ config.path.model_configs }}/{{ model.name }}/templates/compile-time"
       filter:
         files:
-        - bgc.opt.j2
         - blk_frc.opt.j2
         - cdr_frc.opt.j2
         - cppdefs.opt.j2
