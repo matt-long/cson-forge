@@ -1,0 +1,32 @@
+pacific-12km:
+  description: "Pacific Ocean (12km)"
+  model_name: "cson_roms-marbl_v0.1"
+  grid_name: "pacific-12km"
+  start_time: "2010-01-01"
+  end_time: "2015-12-31"
+  grid_kwargs:
+    nx: 1840
+    ny: 960
+    size_x: 23000
+    size_y: 12000
+    center_lon: -161.0
+    center_lat: 14.4
+    rot: -3.0
+    N: 100
+    theta_s: 6.0
+    theta_b: 6.0
+    hc: 250.0
+    hmin: 5.0
+  open_boundaries:
+    south: true
+    east: true
+    north: true
+    west: true
+  partitioning:
+    # nx=1840, ny=960; need (n_procs_x * n_procs_y) % 128 == 0
+    # Options: (16,8)=128, (16,16)=256, (16,32)=512, (20,32)=640, (40,32)=1280
+    n_procs_x: 20
+    n_procs_y: 32
+  #topography_source:
+  #  name: SRTM15
+
