@@ -161,6 +161,7 @@ class RomsMarblInputData(InputData):
     
     model_spec: cson_models.ModelSpec
     grid: rt.Grid
+    grid_child: Optional[rt.Grid] = None
     boundaries: cson_models.OpenBoundaries
     source_data: source_data.SourceData
     blueprint_dir: Path
@@ -388,6 +389,17 @@ class RomsMarblInputData(InputData):
         
         self.grid.save(out_path)       
         self.grid.to_yaml(yaml_path)
+
+        out_path_nesting = None
+        if self.grid_child is not None:
+            out_path_child = self._forcing_filename(input_name="grid_child")
+            self.grid_child.save(out_path_child)
+            yaml_path_child = self._yaml_filename(key + "_child")
+            self.grid_child.to_yaml(yaml_path_child)
+
+            out_path_nesting = self._forcing_filename(input_name="nesting-data")
+            self.grid_child.save_nesting(out_path_nesting)
+
         # Append Resource directly to blueprint_elements.grid
         resource = cstar_models.Resource(location=str(out_path), partitioned=False)
         self.blueprint_elements.grid.data.append(resource)
@@ -412,6 +424,17 @@ class RomsMarblInputData(InputData):
         self._settings_compile_time["param"]["NP_ETA"] = self.partitioning.n_procs_y
         self._settings_compile_time["param"]["NSUB_X"] = 1
         self._settings_compile_time["param"]["NSUB_E"] = 1
+
+        if out_path_nesting is not None:
+            if "param" not in self._settings_compile_time:
+                self._settings_compile_time["extract_data"] = {}            
+            self._settings_compile_time["extract_data"]["do_extract"] = True
+            self._settings_compile_time["extract_data"]["extract_file"] = out_path_nesting
+            self._settings_compile_time["extract_data"]["N_chd"] = self.grid_child.N
+            self._settings_compile_time["extract_data"]["theta_s_chd"] = self.grid_child.theta_s
+            self._settings_compile_time["extract_data"]["theta_b_chd"] = self.grid_child.theta_b
+            self._settings_compile_time["extract_data"]["hc_chd"] = self.grid_child.hc
+            #self._settings_compile_time["extract_data"]["extract_period"] = self.extract_period
 
         self._settings_run_time["roms.in"]["s_coord"] = dict(
             tcline = self.grid.hc,

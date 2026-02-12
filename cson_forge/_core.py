@@ -154,6 +154,8 @@ class CstarSpecBuilder(BaseModel):
     model_name: str
     grid_name: str
     grid_kwargs: Dict[str, Any]
+    grid_kwargs_parent: Optional[Dict[str, Any]] = Field(default=None, validate_default=False)
+    grid_kwargs_child: Optional[Dict[str, Any]] = Field(default=None, validate_default=False)
     open_boundaries: cson_models.OpenBoundaries
     partitioning: cstar_models.PartitioningParameterSet
     start_date: datetime = Field(alias="start_time")
@@ -206,6 +208,11 @@ class CstarSpecBuilder(BaseModel):
         and has been persisted to disk.
         """
         # Create grid
+        self.grid_parent = rt.Grid(**self.grid_kwargs_parent) if self.grid_kwargs_parent is not None else None
+        self.grid_child = rt.Grid(**self.grid_kwargs_child) if self.grid_kwargs_child is not None else None
+        
+        if self.grid_parent is not None:
+            self.grid_kwargs["parent_grid"] = self.grid_parent
         self.grid = rt.Grid(**self.grid_kwargs)
 
         # Initialize blueprint with basic structure
@@ -1396,6 +1403,7 @@ class CstarSpecBuilder(BaseModel):
                 end_date=self.end_date,
                 model_spec=self._model_spec,
                 grid=self.grid,
+                grid_child=self.grid_child,
                 boundaries=self.open_boundaries,
                 source_data=self.src_data,
                 blueprint_dir=self.blueprint_dir,
