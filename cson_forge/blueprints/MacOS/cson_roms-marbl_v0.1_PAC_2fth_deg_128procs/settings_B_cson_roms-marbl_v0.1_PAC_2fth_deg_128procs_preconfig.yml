@@ -131,7 +131,7 @@ compile_time:
     theta_s_chd: 5.0
     theta_b_chd: 2.0
     hc_chd: 250.0
-    extract_period: 1800.0
+    extract_period: 3600.0
   sponge_tune:
     pflx_w_vname: up_west
     pflx_w_tname: bry_time

@@ -7,7 +7,10 @@
       !
       !------------------------------
       logical,parameter,public :: do_extract = {{ extract_data.do_extract|lower }}
-      character(len=60) :: extract_file = '{{ extract_data.extract_file }}'
+      
+      character(len=512) :: extract_file = 
+     &  '{{ extract_data.extract_file }}'
+      
       integer,parameter :: nrpf = {{ extract_data.nrpf }}    ! number of records per output file
       integer,parameter :: edat_prec = {{ extract_data.edat_prec }}  ! Precision of output variables (nf90_float/nf90_double)
 

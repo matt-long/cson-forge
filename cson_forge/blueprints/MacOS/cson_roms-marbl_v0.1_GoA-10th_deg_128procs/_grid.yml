@@ -1,5 +1,5 @@
 ---
-roms_tools_version: 3.5.0
+roms_tools_version: 3.5.1.dev6+g40b5a2ea3
 ---
 ParentGrid:
   nx: 208
@@ -41,3 +41,4 @@ ChildGrid:
   metadata:
     prefix: child
     period: 3600.0
+    include_bgc: true

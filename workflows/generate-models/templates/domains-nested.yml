@@ -44,6 +44,10 @@ NEP-4th_deg:
     theta_s: 6.0
     theta_b: 3.0
     hc: 250.0
+    metadata:
+      prefix: "child"
+      period: 3600.0
+      include_bgc: true
   open_boundaries:
     south: true
     east: false
@@ -73,6 +77,10 @@ GoA-10th_deg:
     theta_s: 6.0
     theta_b: 3.0
     hc: 250.0
+    metadata:
+      prefix: "child"
+      period: 3600.0
+      include_bgc: true
   open_boundaries:
     south: true
     east: false

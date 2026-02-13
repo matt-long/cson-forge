@@ -219,16 +219,24 @@ class CstarSpecBuilder(BaseModel):
         After this method completes, the blueprint is in the **PRECONFIG** stage
         and has been persisted to disk.
         """
-        # Create grid
-        self.grid_parent = rt.Grid(**self.grid_kwargs_parent) if self.grid_kwargs_parent is not None else None
-        if self.grid_parent is not None:
-            self.grid_kwargs["parent_grid"] = self.grid_parent
-            self.grid = rt.ChildGrid(**self.grid_kwargs)
-        else:
-            self.grid = rt.Grid(**self.grid_kwargs)
-
-        self.grid_child = rt.ChildGrid(**self.grid_kwargs_child) if self.grid_kwargs_child is not None else None
         
+        # Create grids
+        # I am a child
+        if self.grid_kwargs_parent is not None:
+            # make parent, but if the parent is also a child, remove the metadata
+            grid_kwargs_parent = {k: v for k, v in self.grid_kwargs_parent.items() if k != "metadata"}
+            self.grid_parent = rt.Grid(**grid_kwargs_parent)
+            self.grid = rt.ChildGrid(parent_grid=self.grid_parent, **self.grid_kwargs)
+        else:
+            grid_kwargs = {k: v for k, v in self.grid_kwargs.items() if k != "metadata"}
+            self.grid = rt.Grid(**grid_kwargs)
+
+        # I am a parent
+        if self.grid_kwargs_child is not None:
+            self.grid_child = rt.ChildGrid(parent_grid=self.grid, **self.grid_kwargs_child)
+        else:
+            self.grid_child = None
+
         # Initialize blueprint with basic structure
         self._initialize_blueprint()
 
@@ -485,7 +493,8 @@ class CstarSpecBuilder(BaseModel):
     
     def _convert_paths_to_strings(self, obj: Any) -> Any:
         """
-        Recursively convert Path objects to strings in a nested structure.
+        Recursively convert Path objects to strings and replace non-serializable
+        objects (e.g. xarray.Dataset) with placeholders for YAML serialization.
         
         Parameters
         ----------
@@ -495,7 +504,7 @@ class CstarSpecBuilder(BaseModel):
         Returns
         -------
         Any
-            Object with all Path objects converted to strings.
+            Object with Path converted to strings and non-serializable types replaced.
         """
         if isinstance(obj, Path):
             return str(obj)
@@ -503,6 +512,10 @@ class CstarSpecBuilder(BaseModel):
             return {k: self._convert_paths_to_strings(v) for k, v in obj.items()}
         elif isinstance(obj, (list, tuple)):
             return type(obj)(self._convert_paths_to_strings(item) for item in obj)
+        elif isinstance(obj, xr.Dataset):
+            return "<xarray.Dataset>"
+        elif isinstance(obj, xr.DataArray):
+            return "<xarray.DataArray>"
         else:
             return obj
     
@@ -1484,6 +1497,18 @@ class CstarSpecBuilder(BaseModel):
         """
         # Initialize from defaults (deep copy to avoid modifying the original)
         self._settings_compile_time = copy.deepcopy(self._model_spec.settings.compile_time.settings_dict)
+        if self.grid_child is not None:
+            if "metadata" not in self.grid_kwargs_child:
+                raise ValueError(
+                    "grid_kwargs_child must contain 'metadata' when grid_child is set (nested domain). "
+                    f"Got keys: {sorted(self.grid_kwargs_child.keys())}"
+                )
+            if "period" not in self.grid_kwargs_child["metadata"]:
+                raise ValueError(
+                    "grid_kwargs_child['metadata'] must contain 'period' when grid_child is set. "
+                    f"Got keys: {sorted(self.grid_kwargs_child['metadata'].keys())}"
+                )
+            self._settings_compile_time["extract_data"]["extract_period"] = self.grid_kwargs_child["metadata"]["period"]
     
     def _init_settings_run_time(self, dt: Optional[float] = None) -> None:
         """
@@ -2268,13 +2293,13 @@ class CstarSpecEngine:
     from cson_forge import CstarSpecEngine
     
     # Load and execute workflow for a domain
-    engine = CstarSpecEngine()
+    engine = CstarSpecEngine(domains_file="domains.yml")
     builder = engine.generate_domain("test-tiny")
     ```
     
     **Domain Configuration:**
     
-    Domain configurations are stored in `domains.yml` with the following structure:
+    Domain configurations are stored in a YAML file with the following structure:
     
     ```yaml
     grid_name:
@@ -2289,20 +2314,16 @@ class CstarSpecEngine:
     ```
     """
     
-    def __init__(self, domains_file: Optional[Union[str, Path]] = None):
+    def __init__(self, domains_file: Union[str, Path]):
         """
         Initialize CstarSpecEngine.
         
         Parameters
         ----------
-        domains_file : Optional[Union[str, Path]], optional
-            Path to domains YAML file. If None, uses default location
-            `cson_forge/domains.yml`. Default is None.
+        domains_file : Union[str, Path]
+            Path to domains YAML file.
         """
-        if domains_file is None:
-            domains_file = config.paths.here / "domains.yml"
-        else:
-            domains_file = Path(domains_file)
+        domains_file = Path(domains_file)
         
         self.domains_file = domains_file
         self._domains: Optional[Dict[str, Any]] = None
@@ -2507,6 +2528,7 @@ class CstarSpecEngine:
         compile_time_settings: Optional[Dict[str, Any]] = None,
         run_time_settings: Optional[Dict[str, Any]] = None,
         ensemble_id: Optional[int] = None,
+        stop_on_failure: bool = False,
     ) -> Dict[str, CstarSpecBuilder]:
         """
         Execute the complete workflow for all domains (generation only).
@@ -2568,6 +2590,8 @@ class CstarSpecEngine:
                 print(f"\n✓ Successfully completed domain: {grid_name}")
             except Exception as e:
                 print(f"\n✗ Error processing domain {grid_name}: {e}")
+                if stop_on_failure:
+                    raise e
                 warnings.warn(
                     f"Error processing domain {grid_name}: {e}",
                     UserWarning,
