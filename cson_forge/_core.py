@@ -2569,12 +2569,27 @@ class CstarSpecEngine:
         print(f"Starting generation for {total_domains} domain(s)")
         print(f"{'='*80}\n")
         
+        
         failed_domains = []
         
         for idx, grid_name in enumerate(domain_list, start=1):
             print(f"\n{'-'*80}")
             print(f"[{idx}/{total_domains}] Processing domain: {grid_name}")
             print(f"{'-'*80}")
+            
+            # TEMPORARY: Remove stale cache between runs
+            # TODO: Remove this once C-Star has a proper cache management system.
+            # https://cworthy.atlassian.net/browse/CSD-538
+            cache_dir = Path.home() / ".cache" / "cstar"
+            if cache_dir.exists():
+                shutil.rmtree(cache_dir)
+                print("⚠ Removed ~/.cache/cstar to avoid stale C-Star cache between runs")
+                warnings.warn(
+                    "~/.cache/cstar was removed to avoid stale cache state",
+                    UserWarning,
+                    stacklevel=2,
+                )
+                        
             
             try:
                 builders[grid_name] = self.generate_domain(

@@ -7,10 +7,7 @@
       !
       !------------------------------
       logical,parameter,public :: do_extract = .false.
-      
-      character(len=512) :: extract_file = 
-     &  'sample_edata.nc'
-      
+      character(len=512) :: extract_file = 'sample_edata.nc'
       integer,parameter :: nrpf = 48    ! number of records per output file
       integer,parameter :: edat_prec = nf90_double  ! Precision of output variables (nf90_float/nf90_double)
 

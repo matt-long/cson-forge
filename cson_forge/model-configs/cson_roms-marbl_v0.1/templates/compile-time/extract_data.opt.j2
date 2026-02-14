@@ -7,10 +7,16 @@
       !
       !------------------------------
       logical,parameter,public :: do_extract = {{ extract_data.do_extract|lower }}
-      
-      character(len=512) :: extract_file = 
-     &  '{{ extract_data.extract_file }}'
-      
+{% set _path = extract_data.extract_file|string %}
+{% if _path|length <= 90 %}
+      character(len=512) :: extract_file = '{{ _path }}'
+{% else %}
+      character(len=512) :: extract_file =
+{% for chunk in _path|batch(100) %}
+     &    '{{ chunk|join('') }}'{% if not loop.last %}//{% endif %}
+
+{% endfor %}
+{% endif %}
       integer,parameter :: nrpf = {{ extract_data.nrpf }}    ! number of records per output file
       integer,parameter :: edat_prec = {{ extract_data.edat_prec }}  ! Precision of output variables (nf90_float/nf90_double)
 

@@ -7,10 +7,9 @@
       !
       !------------------------------
       logical,parameter,public :: do_extract = .true.
-      
-      character(len=512) :: extract_file = 
-     &  '/Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_NEP-4th_deg_128procs/cson_roms-marbl_v0.1_NEP-4th_deg_128procs_nesting.nc'
-      
+      character(len=512) :: extract_file =
+     &    '/Users/mclong/cson-forge-data/input-data/cson_roms-marbl_v0.1_NEP-4th_deg_128procs/cson_roms-marbl_v'//
+     &    '0.1_NEP-4th_deg_128procs_nesting.nc'
       integer,parameter :: nrpf = 48    ! number of records per output file
       integer,parameter :: edat_prec = nf90_double  ! Precision of output variables (nf90_float/nf90_double)
 
