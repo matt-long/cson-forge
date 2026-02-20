@@ -113,7 +113,9 @@ def main(year, test=False):
         year: Year to prepare.
         test: If True, print config and exit without downloading.
     """
-    client = Client(n_workers=2, threads_per_worker=1)
+    # Single worker: copernicusmarine's to_netcdf writes one file per day; multiple
+    # workers cause HDF5 file-locking conflicts (BlockingIOError errno 11).
+    client = Client(n_workers=1, threads_per_worker=1)
     src = cson_forge.source_data.SourceData(
         datasets=["GLORYS"],
         clobber=False,
