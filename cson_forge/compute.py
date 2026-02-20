@@ -69,9 +69,12 @@ class dask_cluster(object):
             else queues.get("premium") or queues.get("default") or "premium"
         )
 
+        conda_env = os.environ.get("CONDA_DEFAULT_ENV", "cson-forge-v0")
+
         self.scheduler_file = scheduler_file
         self.client = None
         
+
         if not slurm_available():
             self.cluster = LocalCluster()
             self.client = Client(self.cluster)
@@ -181,8 +184,9 @@ class dask_cluster(object):
             scheduler_file={scheduler_file}
             rm -f $scheduler_file
 
+            module load conda        
             module load python
-            conda activate atlas-calcs
+            conda activate {conda_env}
 
             #start scheduler
             DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \
