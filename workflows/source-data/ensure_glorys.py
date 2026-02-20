@@ -23,23 +23,22 @@ def make_script(year, script_dir=None, test=False):
     Returns:
         Path to the generated script file.
     """
-    scratch_root = (
-        cson_forge.config.paths.scratch.parent
-        if hasattr(cson_forge.config.paths, "scratch")
-        else Path(os.environ.get("SCRATCH", "/tmp"))
-    )
-    path_logs = scratch_root / "logs"
+    path_work = cson_forge.config.paths.scratch / "source-data-setup"
+    path_logs = path_work / "logs"
     path_logs_str = str(path_logs)
     os.makedirs(path_logs_str, exist_ok=True)
 
     script_dir = script_dir or os.getcwd()
 
     account = cson_forge.config.machine_config.account
+    queue_name = cson_forge.config.machine_config.queues.get("shared")
+    if queue_name is None:
+        raise ValueError(f"shared queue not found")
 
     sbatch_header = f"""#!/bin/bash
         #SBATCH --job-name ensure-glorys-{year}
         #SBATCH --account {account}
-        #SBATCH --partition=shared
+        #SBATCH --partition={queue_name}
         #SBATCH --nodes=1
         #SBATCH --ntasks-per-node=16
         #SBATCH --time=06:00:00
@@ -61,7 +60,7 @@ def make_script(year, script_dir=None, test=False):
         """
     )
 
-    script_file = path_logs / f"ensure-glorys-{year}.sh"
+    script_file = path_work / f"ensure-glorys-{year}.sh"
     script_file.write_text(script)
     return str(script_file)
 

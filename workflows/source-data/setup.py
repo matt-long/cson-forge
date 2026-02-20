@@ -3,7 +3,7 @@
 import ensure_glorys
 
 year_start = 2010
-year_end = 2011
-test = True 
+year_end = 2015
+test = False 
 
 ensure_glorys.batch_download(year_start, year_end, test=test)
