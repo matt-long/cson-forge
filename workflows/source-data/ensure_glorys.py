@@ -42,8 +42,8 @@ def make_script(year, script_dir=None, test=False):
         #SBATCH --nodes=1
         #SBATCH --ntasks-per-node=16
         #SBATCH --time=06:00:00
-        #SBATCH --error {path_logs_str}/ensure-glorys-{year}-%J.err
-        #SBATCH --output {path_logs_str}/ensure-glorys-{year}-%J.out
+        #SBATCH --output {path_logs_str}/ensure-glorys-{year}-%J.log
+        #SBATCH --error {path_logs_str}/ensure-glorys-{year}-%J.log
         """
 
     test_mode = " --test" if test else ""
@@ -56,7 +56,7 @@ def make_script(year, script_dir=None, test=False):
         conda activate cson-forge-v0
 
         cd {script_dir}
-        python ensure_glorys.py --year {year}{test_mode}
+        python -u ensure_glorys.py --year {year}{test_mode}
         """
     )
 
