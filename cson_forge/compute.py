@@ -155,54 +155,60 @@ class dask_cluster(object):
         )
 
         if system == "NERSC_perlmutter":
-            sbatch_header = f"""\
-            #SBATCH --job-name dask-worker
-            #SBATCH --account {account}
-            #SBATCH --qos={queue_name}
-            #SBATCH --nodes={n_nodes}
-            #SBATCH --ntasks-per-node={n_tasks_per_node}
-            #SBATCH --time={wallclock}
-            #SBATCH --constraint=cpu
-            #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-            #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
+            sbatch_header = textwrap.dedent(f"""\
+                #SBATCH --job-name dask-worker
+                #SBATCH --account {account}
+                #SBATCH --qos={queue_name}
+                #SBATCH --nodes={n_nodes}
+                #SBATCH --ntasks-per-node={n_tasks_per_node}
+                #SBATCH --time={wallclock}
+                #SBATCH --constraint=cpu
+                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
+                """)
         elif system == "RCAC_anvil":
-            sbatch_header = f"""\
-            #SBATCH --job-name dask-worker
-            #SBATCH --account {account}
-            #SBATCH --partition={queue_name}
-            #SBATCH --nodes={n_nodes}
-            #SBATCH --ntasks-per-node={n_tasks_per_node}
-            #SBATCH --time={wallclock}
-            #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-            #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
+            sbatch_header = textwrap.dedent(f"""\
+                #SBATCH --job-name dask-worker
+                #SBATCH --account {account}
+                #SBATCH --partition={queue_name}
+                #SBATCH --nodes={n_nodes}
+                #SBATCH --ntasks-per-node={n_tasks_per_node}
+                #SBATCH --time={wallclock}
+                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
+                """)
         else:
-            sbatch_header = f"""\
-            #SBATCH --job-name dask-worker
-            #SBATCH --account {account}
-            #SBATCH --nodes={n_nodes}
-            #SBATCH --ntasks-per-node={n_tasks_per_node}
-            #SBATCH --time={wallclock}
-            #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-            #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
+            sbatch_header = textwrap.dedent(f"""\
+                #SBATCH --job-name dask-worker
+                #SBATCH --account {account}
+                #SBATCH --nodes={n_nodes}
+                #SBATCH --ntasks-per-node={n_tasks_per_node}
+                #SBATCH --time={wallclock}
+                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
+                """)
 
         if system == "NERSC_perlmutter":
-            env_setup = f"""\
-            module load conda
-            module load python
-            source $(conda info --base)/etc/profile.d/conda.sh
-            conda activate {conda_env}"""
+            env_setup = textwrap.dedent(f"""\
+                module load conda
+                module load python
+                source $(conda info --base)/etc/profile.d/conda.sh
+                conda activate {conda_env}
+                """)
             dask_interface = "hsn0"
         elif system == "RCAC_anvil":
-            env_setup = f"""\
-            module load conda
-            source $(conda info --base)/etc/profile.d/conda.sh
-            conda activate {conda_env}"""
+            env_setup = textwrap.dedent(f"""\
+                module load conda
+                source $(conda info --base)/etc/profile.d/conda.sh
+                conda activate {conda_env}
+                """)
             dask_interface = "ib0"
         else:
-            env_setup = f"""\
-            module load conda
-            source $(conda info --base)/etc/profile.d/conda.sh
-            conda activate {conda_env}"""
+            env_setup = textwrap.dedent(f"""\
+                module load conda
+                source $(conda info --base)/etc/profile.d/conda.sh
+                conda activate {conda_env}
+                """)
             dask_interface = "hsn0"
 
         script = textwrap.dedent(
