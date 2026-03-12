@@ -249,9 +249,11 @@ done
 
 echo "Starting workers"
 
+# Use full path so srun tasks (which may not inherit conda env) can find dask-worker
+dask_worker_cmd=$(which dask-worker)
 DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \\
 DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \\
-srun dask-worker \\
+srun $dask_worker_cmd \\
     --scheduler-file $scheduler_file \\
     --interface {dask_interface} \\
     --nworkers 1
