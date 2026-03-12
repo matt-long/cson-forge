@@ -194,6 +194,7 @@ class dask_cluster(object):
         conda_activate = f"conda activate {conda_env}"
         if system == "NERSC_perlmutter":
             env_setup = f"""module load conda
+module load python
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "hsn0"
@@ -217,6 +218,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
             dask_contact_address = None
 
         scheduler_host_arg = f"    --host {dask_scheduler_host} \\\n" if dask_scheduler_host else ""
+        scheduler_interface_arg = f"    --interface {dask_interface} \\\n" if not dask_scheduler_host else ""
         contact_addr_env = f"export DASK_DISTRIBUTED__SCHEDULER__CONTACT_ADDRESS='{dask_contact_address}'\n" if dask_contact_address else ""
 
         script = f"""#!/bin/bash
@@ -234,8 +236,7 @@ rm -f $scheduler_file
 DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \\
 DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \\
 dask scheduler \\
-{scheduler_host_arg}    --interface {dask_interface} \\
-    --scheduler-file $scheduler_file &
+{scheduler_host_arg}{scheduler_interface_arg}    --scheduler-file $scheduler_file &
 
 dask_pid=$!
 
