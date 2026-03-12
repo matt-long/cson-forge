@@ -197,18 +197,27 @@ class dask_cluster(object):
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "hsn0"
-        
+            dask_scheduler_host = None
+            dask_contact_address = None
         elif system == "RCAC_anvil":
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "ib0"
+            # Bind to all interfaces so Jupyter node can reach scheduler; advertise hostname for client
+            dask_scheduler_host = "0.0.0.0"
+            dask_contact_address = "tcp://$(hostname):8786"
        
         else:
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "ib0"
+            dask_scheduler_host = None
+            dask_contact_address = None
+
+        scheduler_host_arg = f"    --host {dask_scheduler_host} \\\n" if dask_scheduler_host else ""
+        contact_addr_env = f"export DASK_DISTRIBUTED__SCHEDULER__CONTACT_ADDRESS='{dask_contact_address}'\n" if dask_contact_address else ""
 
         script = f"""#!/bin/bash
 {sbatch_header}
@@ -220,11 +229,12 @@ rm -f $scheduler_file
 
 {env_setup}
 
+{contact_addr_env}
 #start scheduler
 DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \\
 DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \\
 dask scheduler \\
-    --interface {dask_interface} \\
+{scheduler_host_arg}    --interface {dask_interface} \\
     --scheduler-file $scheduler_file &
 
 dask_pid=$!
@@ -286,7 +296,7 @@ kill -9 $dask_pid
 
         return scheduler_file, jobid
 
-    def _connect_client(self, timeout=60, retries=12, delay=5):
+    def _connect_client(self, timeout=120, retries=15, delay=10):
         """Connect to an existing scheduler with retries."""
         last_exc = None
         for _ in range(retries):
