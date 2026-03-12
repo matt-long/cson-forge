@@ -155,104 +155,88 @@ class dask_cluster(object):
         )
 
         if system == "NERSC_perlmutter":
-            sbatch_header = textwrap.dedent(f"""\
-                #SBATCH --job-name dask-worker
-                #SBATCH --account {account}
-                #SBATCH --qos={queue_name}
-                #SBATCH --nodes={n_nodes}
-                #SBATCH --ntasks-per-node={n_tasks_per_node}
-                #SBATCH --time={wallclock}
-                #SBATCH --constraint=cpu
-                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
-                """)
+            sbatch_header = f"""#SBATCH --job-name dask-worker
+#SBATCH --account {account}
+#SBATCH --qos={queue_name}
+#SBATCH --nodes={n_nodes}
+#SBATCH --ntasks-per-node={n_tasks_per_node}
+#SBATCH --time={wallclock}
+#SBATCH --constraint=cpu
+#SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+#SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
         elif system == "RCAC_anvil":
-            sbatch_header = textwrap.dedent(f"""\
-                #SBATCH --job-name dask-worker
-                #SBATCH --account {account}
-                #SBATCH --partition={queue_name}
-                #SBATCH --nodes={n_nodes}
-                #SBATCH --ntasks-per-node={n_tasks_per_node}
-                #SBATCH --time={wallclock}
-                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
-                """)
+            sbatch_header = f"""#SBATCH --job-name dask-worker
+#SBATCH --account {account}
+#SBATCH --partition={queue_name}
+#SBATCH --nodes={n_nodes}
+#SBATCH --ntasks-per-node={n_tasks_per_node}
+#SBATCH --time={wallclock}
+#SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+#SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
         else:
-            sbatch_header = textwrap.dedent(f"""\
-                #SBATCH --job-name dask-worker
-                #SBATCH --account {account}
-                #SBATCH --nodes={n_nodes}
-                #SBATCH --ntasks-per-node={n_tasks_per_node}
-                #SBATCH --time={wallclock}
-                #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
-                #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out
-                """)
+            sbatch_header = f"""#SBATCH --job-name dask-worker
+#SBATCH --account {account}
+#SBATCH --nodes={n_nodes}
+#SBATCH --ntasks-per-node={n_tasks_per_node}
+#SBATCH --time={wallclock}
+#SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
+#SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
 
         if system == "NERSC_perlmutter":
-            env_setup = textwrap.dedent(f"""\
-                module load conda
-                module load python
-                source $(conda info --base)/etc/profile.d/conda.sh
-                conda activate {conda_env}
-                """)
+            env_setup = f"""module load conda
+module load python
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate {conda_env}"""
             dask_interface = "hsn0"
         elif system == "RCAC_anvil":
-            env_setup = textwrap.dedent(f"""\
-                module load conda
-                source $(conda info --base)/etc/profile.d/conda.sh
-                conda activate {conda_env}
-                """)
+            env_setup = f"""module load conda
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate {conda_env}"""
             dask_interface = "ib0"
         else:
-            env_setup = textwrap.dedent(f"""\
-                module load conda
-                source $(conda info --base)/etc/profile.d/conda.sh
-                conda activate {conda_env}
-                """)
+            env_setup = f"""module load conda
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate {conda_env}"""
             dask_interface = "hsn0"
 
-        script = textwrap.dedent(
-            f"""\
-            #!/bin/bash
-            {sbatch_header}
+        script = f"""#!/bin/bash
+{sbatch_header}
 
-            echo "Starting scheduler..."
+echo "Starting scheduler..."
 
-            scheduler_file={scheduler_file}
-            rm -f $scheduler_file
+scheduler_file={scheduler_file}
+rm -f $scheduler_file
 
-            {env_setup}
+{env_setup}
 
-            #start scheduler
-            DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \
-            DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \
-            dask scheduler \
-                --interface {dask_interface} \
-                --scheduler-file $scheduler_file &
+#start scheduler
+DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \\
+DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \\
+dask scheduler \\
+    --interface {dask_interface} \\
+    --scheduler-file $scheduler_file &
 
-            dask_pid=$!
+dask_pid=$!
 
-            # Wait for the scheduler to start
-            sleep 5
-            until [ -f $scheduler_file ]
-            do
-                 sleep 5
-            done
+# Wait for the scheduler to start
+sleep 5
+until [ -f $scheduler_file ]
+do
+     sleep 5
+done
 
-            echo "Starting workers"
+echo "Starting workers"
 
-            #start scheduler
-            DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \
-            DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \
-            srun dask-worker \
-            --scheduler-file $scheduler_file \
-                --interface {dask_interface} \
-                --nworkers 1 
+DASK_DISTRIBUTED__COMM__TIMEOUTS__CONNECT=3600s \\
+DASK_DISTRIBUTED__COMM__TIMEOUTS__TCP=3600s \\
+srun dask-worker \\
+    --scheduler-file $scheduler_file \\
+    --interface {dask_interface} \\
+    --nworkers 1
 
-            echo "Killing scheduler"
-            kill -9 $dask_pid
-            """
-        )
+echo "Killing scheduler"
+kill -9 $dask_pid
+"""
 
         script_file = tempfile.mktemp(prefix="launch-dask.", dir=path_dask_str)
         with open(script_file, "w") as fid:
