@@ -17,8 +17,8 @@ from dask.distributed import Client, LocalCluster
 
 from .config import paths, system, machine_config
 
-# Get JupyterHub URL from environment variable, default to empty string
-JUPYTERHUB_URL = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "")
+# Get JupyterHub/Jupyter URL from environment variable for dashboard proxy
+JUPYTERHUB_URL = os.environ.get("JUPYTERHUB_SERVICE_PREFIX") or os.environ.get("JUPYTER_SERVER_URL")
 
 class dask_cluster(object):
     """Launch or connect to a Dask cluster on SLURM, or fall back to local."""
@@ -110,9 +110,10 @@ class dask_cluster(object):
             )
 
         self.local_cluster = False
-        dask.config.config["distributed"]["dashboard"][
-            "link"
-        ] = "{JUPYTERHUB_SERVICE_PREFIX}proxy/{host}:{port}/status"
+        if JUPYTERHUB_URL is not None:
+            dask.config.config["distributed"]["dashboard"][
+                "link"
+            ] = f"{JUPYTERHUB_URL}proxy/{{host}}:{{port}}/status"
         
         try:
             self._connect_client()
@@ -135,10 +136,10 @@ class dask_cluster(object):
                 self._connect_client()
             else:
                 raise
-        self.dashboard_link = f"{JUPYTERHUB_URL}{self.client.dashboard_link}"
-
-
-        print(f"Dashboard:\n {self.dashboard_link}")
+        
+        #self.dashboard_link = f"{JUPYTERHUB_URL}{self.client.dashboard_link}"
+        # what we did before is above and worked on Perlmutter        
+        print(f"Dashboard:\n {self.client.dashboard_link}")
 
     def _launch_dask_cluster(
         self, account, n_nodes, n_tasks_per_node, wallclock, queue_name, conda_env
