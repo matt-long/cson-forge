@@ -205,7 +205,7 @@ conda activate {conda_env}"""
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate {conda_env}"""
-            dask_interface = "hsn0"
+            dask_interface = "ib0"
 
         script = f"""#!/bin/bash
 {sbatch_header}
