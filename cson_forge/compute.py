@@ -18,7 +18,10 @@ from dask.distributed import Client, LocalCluster
 from .config import paths, system, machine_config
 
 # Get JupyterHub/Jupyter URL from environment variable for dashboard proxy
-JUPYTERHUB_URL = os.environ.get("JUPYTERHUB_SERVICE_PREFIX") or os.environ.get("JUPYTER_SERVER_URL")
+# JUPYTERHUB_SERVICE_PREFIX: path prefix (Perlmutter), uses proxy/{host}:{port}/status
+# JUPYTER_SERVER_URL: full URL (Anvil), uses proxy/{host}/{port}/status
+_JUPYTERHUB_PREFIX = os.environ.get("JUPYTERHUB_SERVICE_PREFIX")
+_JUPYTER_SERVER_URL = os.environ.get("JUPYTER_SERVER_URL")
 
 class dask_cluster(object):
     """Launch or connect to a Dask cluster on SLURM, or fall back to local."""
@@ -110,11 +113,22 @@ class dask_cluster(object):
             )
 
         self.local_cluster = False
-        if JUPYTERHUB_URL is not None:
+        if _JUPYTERHUB_PREFIX is not None:
+            # Perlmutter: path prefix, proxy uses host:port
             dask.config.config["distributed"]["dashboard"][
                 "link"
-            ] = f"{JUPYTERHUB_URL}proxy/{{host}}:{{port}}/status"
-        
+            ] = f"{_JUPYTERHUB_PREFIX}proxy/{{host}}:{{port}}/status"
+        elif _JUPYTER_SERVER_URL is not None:
+            # Anvil: full URL, proxy uses host/port path segments
+            dask.config.config["distributed"]["dashboard"][
+                "link"
+            ] = f"{_JUPYTER_SERVER_URL}proxy/{{host}}/{{port}}/status"
+        else:
+            # No Jupyter proxy: use direct link (avoids KeyError from default template)
+            dask.config.config["distributed"]["dashboard"][
+                "link"
+            ] = "{scheme}://{host}:{port}/status"
+
         try:
             self._connect_client()
         except RuntimeError:
@@ -137,9 +151,8 @@ class dask_cluster(object):
             else:
                 raise
         
-        #self.dashboard_link = f"{JUPYTERHUB_URL}{self.client.dashboard_link}"
-        # what we did before is above and worked on Perlmutter        
-        print(f"Dashboard:\n {self.client.dashboard_link}")
+        self.dashboard_link = self.client.dashboard_link
+        print(f"Dashboard:\n {self.dashboard_link}")
 
     def _launch_dask_cluster(
         self, account, n_nodes, n_tasks_per_node, wallclock, queue_name, conda_env
