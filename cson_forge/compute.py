@@ -78,9 +78,6 @@ class dask_cluster(object):
             if conda_env is not None
             else os.environ.get("CONDA_DEFAULT_ENV", "cson-forge-v0")
         )
-        # Use CONDA_PREFIX only when set; sys.prefix can point to Jupyter server env, not user's
-        conda_env_path = os.environ.get("CONDA_PREFIX") or None
-
         self.scheduler_file = scheduler_file
         self.client = None
         
@@ -110,7 +107,6 @@ class dask_cluster(object):
                 wallclock=wallclock,
                 queue_name=queue_name,
                 conda_env=conda_env,
-                conda_env_path=conda_env_path,
             )
 
         self.local_cluster = False
@@ -143,7 +139,6 @@ class dask_cluster(object):
                     wallclock=wallclock,
                     queue_name=queue_name,
                     conda_env=conda_env,
-                    conda_env_path=conda_env_path,
                 )
                 self._connect_client()
             else:
@@ -153,7 +148,7 @@ class dask_cluster(object):
         print(f"Dashboard:\n {self.dashboard_link}")
 
     def _launch_dask_cluster(
-        self, account, n_nodes, n_tasks_per_node, wallclock, queue_name, conda_env, conda_env_path=None
+        self, account, n_nodes, n_tasks_per_node, wallclock, queue_name, conda_env
     ):
         """Submit a SLURM job that starts a Dask scheduler and workers."""
         # Use scratch parent as scratch location, or fall back to environment variable
@@ -196,11 +191,7 @@ class dask_cluster(object):
 #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
 #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
 
-        if conda_env_path:
-            conda_activate = f"conda activate {conda_env_path}"
-        else:
-            conda_activate = f"conda activate {conda_env}"
-        
+        conda_activate = f"conda activate {conda_env}"
         if system == "NERSC_perlmutter":
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
