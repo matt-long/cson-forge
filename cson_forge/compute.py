@@ -4,7 +4,6 @@ Utilities for launching a Dask cluster
 
 import os
 import shutil
-import sys
 from subprocess import check_output, check_call
 from pathlib import Path
 
@@ -79,8 +78,8 @@ class dask_cluster(object):
             if conda_env is not None
             else os.environ.get("CONDA_DEFAULT_ENV", "cson-forge-v0")
         )
-        # Use current env path so SLURM job uses same env as notebook (avoids version mismatch)
-        conda_env_path = os.environ.get("CONDA_PREFIX") or sys.prefix
+        # Use CONDA_PREFIX only when set; sys.prefix can point to Jupyter server env, not user's
+        conda_env_path = os.environ.get("CONDA_PREFIX") or None
 
         self.scheduler_file = scheduler_file
         self.client = None
@@ -177,6 +176,7 @@ class dask_cluster(object):
 #SBATCH --constraint=cpu
 #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
 #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
+        
         elif system == "RCAC_anvil":
             sbatch_header = f"""#SBATCH --job-name dask-worker
 #SBATCH --account {account}
@@ -186,6 +186,7 @@ class dask_cluster(object):
 #SBATCH --time={wallclock}
 #SBATCH --error {path_dask_str}/dask-workers/dask-worker-%J.err
 #SBATCH --output {path_dask_str}/dask-workers/dask-worker-%J.out"""
+        
         else:
             sbatch_header = f"""#SBATCH --job-name dask-worker
 #SBATCH --account {account}
@@ -199,17 +200,19 @@ class dask_cluster(object):
             conda_activate = f"conda activate {conda_env_path}"
         else:
             conda_activate = f"conda activate {conda_env}"
+        
         if system == "NERSC_perlmutter":
             env_setup = f"""module load conda
-module load python
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "hsn0"
+        
         elif system == "RCAC_anvil":
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
 {conda_activate}"""
             dask_interface = "ib0"
+       
         else:
             env_setup = f"""module load conda
 source $(conda info --base)/etc/profile.d/conda.sh
